@@ -1,1 +1,65 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name="theme-color" content="#000000"><link rel="manifest" href="/instaloot/manifest.json"><link rel="shortcut icon" href="/instaloot/favicon.ico"><title>React App</title><link href="/instaloot/static/css/main.3143ee3e.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div><script type="text/javascript" src="/instaloot/static/js/main.b32284b0.js"></script></body></html>
+import React, { Component } from 'react';
+import './App.css';
+
+class App extends Component {
+  constructor(props) {
+  super(props);
+  this.state = { link:"",thumburl:"",pictureurl:"" };
+  this.parselink=this.parselink.bind(this);
+  this.setState=this.setState.bind(this);
+}
+
+  parselink=(event)=>{
+    event.preventDefault();
+    var newpic=""
+    fetch("https://api.instagram.com/oembed/?url="+this.state.link)
+    .then((resp) => resp.json())
+      .then(function(data) {
+      newpic=data.thumbnail_url;  
+      console.log(this.state.thumburl+" parsed");
+      
+//Thumb to Full-sized Image
+      var regurl=newpic;
+    //  pictureurl.replace(.*,'$1')
+      
+      var resurl=regurl.match(/(https:\/\/.*\/vp\/).*\/(t51\.2885-15\/).*\/(\d.*)/);
+    //  console.log("Reg url: "+regurl)
+      console.log("Res url: "+resurl)
+      this.setState(({
+        thumburl: newpic,
+        link:"",
+        pictureurl:resurl[1]+resurl[2]+resurl[3]
+      }))
+      console.log(this.state.pictureurl)
+      //console.log("newpic "+newpic);
+    }.bind(this) 
+  ) // Transform the data into json
+  
+  
+  
+  }
+  
+  render() {
+    var caption="Enter the link for any instagram post and get the FULLSCREEN image, ready for download"
+    return (
+      <div className="App">
+        <header className="App-header">
+          <h1 className="App-title">InstaLoot 0.2 by Su</h1>
+          <h1 className="App-caption">{caption}</h1>
+        </header>
+        <form onSubmit={this.parselink}>
+        <input style={{backgroundColor:'black',width:300,height:100}}className="Input-text"type="text"placeholder="&nbsp;Enter any Instagram post's url"
+        onChange={(event) => this.setState({ link: event.target.value })}value={this.state.link}/>
+        <input style={{backgroundColor:'gray',height:70}}className="Input-text"type="Submit"value="Get picture"/>
+        </form>
+        <div className="Input-text"><br/>Once image loads, click on it to Download<br/>
+        <a href={this.state.pictureurl} download><img src={this.state.pictureurl}alt="" style={{height:'300px'}}/></a>
+        </div>
+      </div>
+    );
+  }
+}
+
+
+
+export default App;
