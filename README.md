@@ -1,3 +1,4 @@
+## Outdated. Doesn't work anymore.
 # instaloot
 React App: Download Full-sized images from Instagram by entering their url!
 
